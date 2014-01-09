@@ -384,3 +384,4 @@ Stack trace:
 #11 /Users/Jeff/Sites/filtered/app/protected/yiic(4): require_once('/Users/Jeff/Sit...')
 #12 {main}
 ---
+2014/01/09 01:42:19 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1005 Can't create table 'filtered.#sql-228_61' (errno: 121). The SQL statement executed was: ALTER TABLE `fi_private_message` ADD CONSTRAINT `fk_message_user` FOREIGN KEY (`user_id`) REFERENCES `fi_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE.

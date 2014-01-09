@@ -31,7 +31,7 @@ class Message extends CActiveRecord
   const STATUS_REVIEW = 15; // moved to review folder
   const STATUS_ROUTED = 20; // moved to destination folder
   const STATUS_TRAINED=50; // found in training folder
-  const STATUS_DELETED = 90; // moved to destination folder
+  const STATUS_DELETED = 90; // moved to deleted folder
   
   public $email;
   public $folder_name;
@@ -253,7 +253,7 @@ class Message extends CActiveRecord
         $to = $cred[0];
         unset($cred);
         $message_count = 0;
-        $subject ='Message Digest';
+        $subject ='Message Digest for '.$account['name'];
         if ($us['digestLast'] == 0) $us['digestLast'] = time()-(7*24*60*60); // one week back by default
         // build top of digest
         $body ='<p><em>This digest consists of messages you have received since '.date("M j, g:i a",$us['digestLast']).'</em></p>';
@@ -281,20 +281,25 @@ class Message extends CActiveRecord
             // find all messages since $digest->digestLast
             $message_list = Message::model()->account_of($account_id)->in_folder($folder_id)->since($us['digestLast'])->findAll(array('order'=>'id desc'));
             // build folder heading
-            $section.='<p><strong>Messages from '.$mailbox.'</strong><br /><ul>';
+            $section.='<p><strong>Messages in '.$mailbox.'</strong><br /><ul>';
           }
           // build message section of for this folder
           if (!empty($message_list)) {
             foreach ($message_list as $m) {
-              $msg_line = getSenderNameForDigest($m['sender_id']).': '.$m['subject'];
+              if ($mailbox != $r->path_private) {
+                $msg_line = getSenderNameForDigest($m['sender_id']).': <a href="'.Yii::app()->getBaseUrl(true).'/message/view/'.$m['id'].'">'.$m['subject'].'</a>';                
+              } else {
+                $msg_line = getSenderNameForDigest($m['sender_id']).': <a href="'.Yii::app()->getBaseUrl(true).'/privatemessage/index/">'.$m['subject'].'</a>';                
+              }
               // to do - add subject, body and link to html body
               $section.='<li>'.$msg_line.'</li>';
               $message_count +=1;
             }
+            $section.='</ul></p>';
+            $body.=$section;
           } else {
             $section.='No messages in this folder.';
           }
-          $body.=$section.'</ul></p>';
       } // end of folder loop
         // build end of digest
         $digest_footer = '<p>End of your digest.</p><p>';
@@ -320,6 +325,14 @@ class Message extends CActiveRecord
     $il = new ImapLog();
     $il->add('processDigests','',$xtime);    
   }  
+  
+  public function isOwner($id,$user_id) {
+    $m = Message::model()->findByAttributes(array('id'=>$id,'user_id'=>$user_id));
+    if (empty($m))
+      return false;
+    else
+      return $m;
+  }
   
   // scoping functions
   public function scopes()
@@ -349,7 +362,6 @@ class Message extends CActiveRecord
     ));
       return $this;
   }
-
 
   public function account_of($account_id=0)
   {

@@ -145,7 +145,7 @@ class FolderController extends Controller
     		if(isset($_GET['Folder']))
     			$model->attributes=$_GET['Folder'];
     		$this->render('index',array(
-    			'model'=>$model,
+    			'model'=>$model->owned_by(Yii::app()->user->id),
     		));     		
 	}
 

@@ -62,6 +62,10 @@ class DaemonController extends Controller
       // every other hour
       $r->processDetectTraining();
     }
+    if ($current_hour%3) {
+      // every few hours
+      $r->scanPrivate();
+    }
     if ($current_hour%6) {
       // every six hours
       $r->freshenInbox();

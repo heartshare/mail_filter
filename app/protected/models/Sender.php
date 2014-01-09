@@ -190,6 +190,16 @@ class Sender extends CActiveRecord
                     ),        
 		));
 	}
+
+	public function isNew($account_id,$mailbox, $host) {
+	  // detects if sender is new in this account
+    $email = $mailbox.'@'.$host;
+    $s = Sender::model()->findByAttributes(array('account_id'=>$account_id,'email'=>$email));
+    if (empty($s))
+      return true; // new sender
+    else
+      return false;
+	}
 	
 	public function add($user_id,$account_id,$personal, $mailbox, $host,$folder_id=0) {
     $email = $mailbox.'@'.$host;

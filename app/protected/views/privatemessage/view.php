@@ -13,22 +13,20 @@ $this->breadcrumbs=array(
     <td><strong>From: <?php  echo getSenderNameForDigest($model->sender_id); ?></strong><br /></td><td class="right"><?php echo message_udate($model->udate); ?></td>
   </tr>
   <tr class="even">
-    <td class="subject" colspan="2"><?php echo $model->subject; ?></td>
+    <td class="subject" colspan="2"><?php echo decryptStr($model->subject); ?></td>
   </tr>
 <tr class="odd">
 <td colspan="2" class="message_body"><div>
 <?php 
-if (empty($model->body_text) && empty($model->body_html)) {
-  ?>
-  Sorry, we could not locate the message in your review or inbox folder.
-  <?php
-} else if (empty($model->body_html)) {
+  $body_text = decryptStr($model->body_text);
+  $body_html = decryptStr($model->body_html);
+  if (empty($body_text)) {
   ?><pre><?php
-  echo $model->body_text;
+  echo $body_text;
   ?></pre><?php
 }
 else
-  echo $model->body_html;
+  echo $body_html;
 ?>  
 </div>
 </td>

@@ -1,6 +1,6 @@
 <?php
 
-class MessageController extends Controller
+class PrivatemessageController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -27,15 +27,15 @@ class MessageController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array(''),
+				'actions'=>array(),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','index','view'),
+				'actions'=>array('index','view','delete','initialize'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('admin'),
 				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -44,6 +44,12 @@ class MessageController extends Controller
 		);
 	}
 
+  public function actionInitialize() {
+    $pm = new PrivateMessage();
+    $pm->initialize();
+    $this->redirect('index');
+  }
+  
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
@@ -51,25 +57,10 @@ class MessageController extends Controller
 	public function actionView($id)
 	{
 	  if (Yii::app()->user->isGuest) 
-  		$this->redirect(Yii::app()->getBaseUrl(true));	    	    
-  	$m= new Message();
-  	$model = $m->isOwner($id,Yii::app()->user->id);
-  	if ($model===false)
-  		$this->redirect(Yii::app()->getBaseUrl(true));	    	    
-	  if (Yii::app()->params['version']=='advanced') {
-	    // lookup message & cache it
-	    if ($model['cached']==0) {
-    	  $a = new Advanced();
-    	  $a->fetchMessage($id);	      
-	    }
-  	  $isMobile = Yii::app()->detectMobileBrowser->showMobile;
-  		$this->render('view',array(
-  			'isMobile' => $isMobile,
-  			'model'=>$this->loadModel($id),
-  		));
-	  } else {
-  		$this->redirect('/site/page?view=upgrade');	    	    
-	  }
+  		$this->redirect(Yii::app()->getBaseUrl(true));
+		$this->render('view',array(
+			'model'=>$this->loadModel($id),
+		));
 	}
 
 	/**
@@ -78,14 +69,14 @@ class MessageController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Message;
+		$model=new PrivateMessage;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Message']))
+		if(isset($_POST['PrivateMessage']))
 		{
-			$model->attributes=$_POST['Message'];
+			$model->attributes=$_POST['PrivateMessage'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -107,9 +98,9 @@ class MessageController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Message']))
+		if(isset($_POST['PrivateMessage']))
 		{
-			$model->attributes=$_POST['Message'];
+			$model->attributes=$_POST['PrivateMessage'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -144,29 +135,30 @@ class MessageController extends Controller
 	 */
 	public function actionIndex()
 	{
-	    $this->layout = '//layouts/column1';
-    		$model=new Message('search');
-    		$model->unsetAttributes();  // clear any default values
-    		$model->user_id = Yii::app()->user->id;
-    		if(isset($_GET['Message']))
-    			$model->attributes=$_GET['Message'];
-    		$ui = UserSetting::model()->findByPk(Yii::app()->user->id);
-     		if (!empty($ui) and $ui->timezone<>'')
-  	      date_default_timezone_set($ui->timezone);
-    		$this->render('index',array(
-    			'model'=>$model->active()->owned_by(Yii::app()->user->id),
-    		));
-    }
+  	  if (Yii::app()->user->isGuest) 
+    		$this->redirect(Yii::app()->getBaseUrl(true));	  
+  		$model=new PrivateMessage('search');
+  		$model->unsetAttributes();  // clear any default values
+  		$model->user_id = Yii::app()->user->id;
+  		if(isset($_GET['PrivateMessage']))
+  			$model->attributes=$_GET['PrivateMessage'];
+  		$ui = UserSetting::model()->findByPk(Yii::app()->user->id);
+   		if (!empty($ui) and $ui->timezone<>'')
+	      date_default_timezone_set($ui->timezone);
+  		$this->render('index',array(
+  			'model'=>$model->owned_by(Yii::app()->user->id),
+  		));
+	}
 
 	/**
 	 * Manages all models.
 	 */
 	public function actionAdmin()
 	{
-		$model=new Message('search');
+		$model=new PrivateMessage('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Message']))
-			$model->attributes=$_GET['Message'];
+		if(isset($_GET['PrivateMessage']))
+			$model->attributes=$_GET['PrivateMessage'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -180,7 +172,7 @@ class MessageController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Message::model()->findByPk($id);
+		$model=PrivateMessage::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -192,7 +184,7 @@ class MessageController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='message-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='private-message-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

@@ -9,9 +9,9 @@
 
 	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>255,'labelOptions' => array('label' => 'Friendly Name'))); ?>
 
-	<?php echo $form->textFieldRow($model,'username',array('class'=>'span5','maxlength'=>255,'labelOptions' => array('label' => 'Account Login / Username'))); ?>
+	<?php echo $form->textFieldRow($model,'username',array('class'=>'span5','maxlength'=>255,'labelOptions' => array('label' => 'Account Email Address'))); ?>
 	
-	<?php echo $form->textFieldRow($model,'password',array('class'=>'span5','maxlength'=>255)); ?>
+	<?php echo $form->passwordFieldRow($model,'password',array('class'=>'span5','maxlength'=>255)); ?>
 
   <?php echo $form->labelEx($model,'Mail Provider'); ?>
   <?php echo $form->dropDownList($model,'provider', $model->getTypeOptions()); ?>

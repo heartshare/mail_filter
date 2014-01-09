@@ -54,6 +54,7 @@ if (Yii::app()->params['env']=='live') {  Yii::app()->clientScript->registerScri
             array('url'=>array('/alertkeyword/index'), 'label'=>'Alert keywords'),
             array('url'=>array('/quiethour/index'), 'label'=>'Quiet hours'),
             array('url'=>array('/recipient/index'), 'label'=>'Recipients'),
+            array('url'=>array('/privatemessage/index'), 'label'=>'Secure Messages'),
           )),
 			)
   	  ) : array() ),
@@ -71,7 +72,7 @@ if (Yii::app()->params['env']=='live') {  Yii::app()->clientScript->registerScri
           array('url'=>'http://filtered.uservoice.com/', 'label'=>'Request Features'),
 
           array('url'=>'https://groups.google.com/d/forum/filtered', 'label'=>'Support Forum'),
-        array('url'=>'https://github.com/newscloud/filtered_basic', 'label'=>'Get the Code'),
+        array('url'=>'https://github.com/newscloud/mail_filter', 'label'=>'Get the Code'),
         array('url'=>'http://jeffreifman.com/filtered-open-source-imap-mail-filtering-software-for-php/release-history/', 'label'=>'Check for Updates'),
 				)),
 				array('label'=>'Account', 'items'=> array(

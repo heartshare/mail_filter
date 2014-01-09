@@ -128,7 +128,8 @@ $options = array(
     				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
     				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
     				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',    			
-    				'request/verify/<id:\d+>/<hash:\w+>'=>'request/verify',	    				'/hybridauth' => '/hybridauth',
+    				'request/verify/<id:\d+>/<hash:\w+>'=>'request/verify',
+    				'/hybridauth' => '/hybridauth',
     				'' => 'site/index'
     			),
     		),

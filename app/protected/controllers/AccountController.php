@@ -155,7 +155,7 @@ class AccountController extends Controller
       		if(isset($_GET['Account']))
       			$model->attributes=$_GET['Account'];
       		$this->render('index',array(
-      			'model'=>$model,
+      			'model'=>$model->owned_by(Yii::app()->user->id),
       		));
   }
 

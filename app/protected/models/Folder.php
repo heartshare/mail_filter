@@ -183,6 +183,14 @@ class Folder extends CActiveRecord
       $r->createMailbox($account_id,$f);
     }
   }
+
+  public function initialize_private($user_id,$account_id) {
+    // initialize private folder
+    $r = new Remote();
+    $r->setDefaultPaths($account_id);
+    $this->add($user_id,$account_id,$r->path_private,1);
+    $r->createMailbox($account_id,$r->path_private);
+  }
   
   public function train($id) {
     // train folder based on existing contents

@@ -17,6 +17,7 @@ class Remote extends CComponent
   public $path_review;
   public $path_block;
   public $path_archive;
+  public $path_private;
   public $delete_mode;
   public $scan_seconds;
   public $process_timeout;
@@ -47,9 +48,9 @@ class Remote extends CComponent
     // creates a remote mailbox
     $this->open($account_id,'Inbox');
     $newMailbox = imap_utf7_encode($this->hostname.$folder);
-    lg ('creating: '.$account_id.' '.$newMailbox);
+    //lg ('creating: '.$account_id.' '.$newMailbox);
     $result = imap_createmailbox($this->stream,$newMailbox);
-    lg(varDumpToString($result));
+    //lg(varDumpToString($result));
     $this->close();
     return $result;
   }
@@ -60,8 +61,8 @@ class Remote extends CComponent
     $current_folder = imap_utf7_encode($this->hostname.$current_folder);
     $new_folder = imap_utf7_encode($this->hostname.$new_folder);
     $result = imap_renamemailbox($this->stream,$current_folder,$new_folder);
-    lg('imap: RenameMailbox: '.$current_folder.' =>'.$new_folder);
-    lg(varDumpToString($result));
+    //lg('imap: RenameMailbox: '.$current_folder.' =>'.$new_folder);
+    //lg(varDumpToString($result));
     $this->close();
     return $result;
   }
@@ -110,13 +111,18 @@ class Remote extends CComponent
             // if udate is too old, skip msg
             if (time()-$msg['udate']>$this->scan_seconds) continue; // skip msg
             // default action
-      	     $action = self::ACTION_MOVE_FILTERED;     	    
+      	     $action = self::ACTION_MOVE_FILTERED;
+      	     $isNew = $s->isNew($account_id,$msg["personal"], $msg["mailbox"]);
             // look up sender, if new, create them
             $sender_id = $s->add($user_id,$account_id,$msg["personal"], $msg["mailbox"], $msg["host"],0);                       
             $sender = Sender::model()->findByPk($sender_id);
              // create a message in db if needed
              $message_id = $m->add($user_id,$account_id,0,$sender_id,$msg['message_id'],$msg['subject'],$msg['udate']);        
           	  $message = Message::model()->findByPk($message_id);
+              if ($isNew) {
+                $this->challengeSender($user_id,$account_id,$sender,$message);
+              }
+
            	  if ($message['status'] == Message::STATUS_FILTERED ||
            	    $message['status'] == Message::STATUS_REVIEW ||
            	    ($message['status'] == Message::STATUS_TRAINED && $message['folder_id'] <> $folder_id) ||
@@ -214,11 +220,16 @@ class Remote extends CComponent
             // look up sender, if new, create them
             $sender_id = $s->add($user_id,$account_id,$msg["personal"], $msg["mailbox"], $msg["host"],0);                       
             $sender = Sender::model()->findByPk($sender_id);
-            $sender = Sender::model()->findByPk($sender_id);
             // if sender destination known, route to folder
             if ($destination_folder ==0 && $sender['folder_id'] > 0) {
               $action = self::ACTION_ROUTE_FOLDER;  
               $destination_folder = $sender['folder_id'];      
+            }
+            // whitelist verified senders go to inbox
+            if ($sender->is_verified==1 && $sender['folder_id'] ==0 && UserSetting::model()->useWhitelisting($user_id)) {
+              // place message in inbox
+              $action = self::ACTION_ROUTE_FOLDER;  
+              $destination_folder = Folder::model()->lookup($account_id,$this->path_inbox);             
             }
              // create a message in db
           	  $message = Message::model()->findByAttributes(array('message_id'=>$msg['message_id']));
@@ -387,7 +398,7 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
  public function processDetectTraining() {
    $time_start = time();
    // search trainable folders for manual drag and drop training and set sender routing
-   $message_limit=50;
+   $message_limit=150;
    $s = new Sender();
    $m = new Message();
    $users = User::model()->findAll();
@@ -409,7 +420,7 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
         $this->open($account_id,$mailbox);
         $tstamp = time() - 3600*24*3; // currently 3 days ago
         echo 'Checking dates since: '.date("j F Y",$tstamp);
-        $recent_messages = @imap_search($this->stream, 'SINCE "'.date("j F Y",$tstamp).'"',SE_UID); 
+        $recent_messages = @imap_search($this->stream, 'SINCE "'.date("j F Y",$tstamp).'"',SE_UID);
         if ($recent_messages===false) continue; // to do - continue into next folder
         $result = imap_fetch_overview($this->stream, implode(',',array_slice($recent_messages,0,$message_limit)),FT_UID);
         foreach ($result as $item) {         
@@ -424,7 +435,11 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
           $message_id = $m->add($user_id,$account_id,$folder_id,$sender_id,$msg['message_id'],$msg['subject'],$msg['udate']);          
           $message = Message::model()->findByPk($message_id);
           // check if message was already routed here - folder id and status_routed
-          if ($message['status']<>Message::STATUS_ROUTED OR ($message['status']==Message::STATUS_ROUTED && $message['folder_id'] <> $folder_id)) {
+          if (
+          ($message['status']==Message::STATUS_ROUTED && $message['folder_id'] <> $folder_id) ||
+          ($message['status']==Message::STATUS_TRAINED && $message['folder_id'] <> $folder_id) ||
+          ($message['status']<>Message::STATUS_ROUTED AND $message['status']<>Message::STATUS_TRAINED)
+) {
             echo 'Train to '.$f['name'];lb();
             $m->setFolder($message_id,$folder_id); 
             // only train sender when message is newer than last setting
@@ -539,7 +554,7 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
   	  $message = Message::model()->findByAttributes(array('message_id'=>$msg['message_id']));
      echo 'Moving to Trash';lb();
      // handle gmail delete differently
-     if ($this->delete_mode == 'gmail')
+     if ($this->delete_mode == 'gmail') 
        $result = @imap_mail_move($this->stream,$uid,"[Gmail]/Trash",CP_UID);
      else
        $result = @imap_delete($this->stream,$uid,FT_UID);
@@ -550,7 +565,60 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
        }
      }    
   }
-  
+
+  public function scanPrivate() {
+    if (Yii::app()->params['version']=='basic') return false;
+    // scan private folder to encrypt and delete
+    $time_start = time();
+    // search trainable folders for manual drag and drop training and set sender routing
+    $message_limit=150;
+    $s = new Sender();
+    $m = new Message();
+    $f = new Folder();
+    $users = User::model()->findAll();
+    foreach ($users as $user) {
+      $user_id = $user['id'];
+      echo 'User: '.$user['username'];lb();
+      $accounts = Account::model()->findAllByAttributes(array('user_id'=>$user_id));
+      foreach ($accounts as $account) {
+        $account_id = $account['id'];  
+        $this->setDefaultPaths($account_id);        
+        echo 'Account: '.$account['name'];lb();
+        $this->open($account_id,$this->path_private);
+        // look up folder_id of priate folder
+        $folder_id = $f->lookup($account_id,$this->path_private); 
+          $tstamp = time()-(30*24*60*60); // a month ago
+          $recent_messages = @imap_search($this->stream, 'SINCE "'.date("j F Y",$tstamp).'"',SE_UID);
+          if ($recent_messages!==false) {
+            $result = imap_fetch_overview($this->stream, implode(',',array_slice($recent_messages,0,$message_limit)),FT_UID);
+            foreach ($result as $item) {         
+              if (!$this->checkExecutionTime($time_start)) break;
+              $msg = $this->parseHeader($item);            
+              // look up sender, if new, create them
+              $sender_id = $s->add($user_id,$account_id,$msg["personal"], $msg["mailbox"], $msg["host"],$folder_id);
+              $sender = Sender::model()->findByPk($sender_id);
+             // create a message in db
+             $message_id = $m->add($user_id,$account_id,$folder_id,$sender_id,$msg['message_id'],$msg['subject'],$msg['udate']);          
+             $message = Message::model()->findByPk($message_id);
+             // add to private messages
+             $this->addPrivateMessage($message,$msg['uid']);
+             if ($this->delete_mode == 'gmail') 
+               $result = @imap_mail_move($this->stream,$msg['uid'],"[Gmail]/Trash",CP_UID);
+             else
+               $result = @imap_delete($this->stream,$msg['uid'],FT_UID);
+               $m->setStatus($message_id,Message::STATUS_DELETED);         
+               $m->setFolder($message_id,$folder_id);
+          } // end loop
+        }
+        @imap_expunge($this->stream);    
+        $this->close();        
+      } // end account loop        
+    } // end user loop
+    $time_end = time();
+    $il = new ImapLog();
+    $il->add('scanPrivate','',$time_end-$time_start);        
+  }
+    
   public function parseHeader($header) {
     // parses header object returned from imap_fetch_overview    
     if (!isset($header->from)) {
@@ -582,12 +650,12 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       if ($msg['udate']==0 && isset($header->date)) {
           $msg['udate']=strtotime($header->date);
       }
+      $msg['rx_email']='';        
       if (isset($header->to)) {
-        $to_arr = imap_rfc822_parse_adrlist($header->to,'gmail.com');              
+        $to_arr = imap_rfc822_parse_adrlist($header->to,'gmail.com');
         $to_info = $to_arr[0];
-        $msg['rx_email']=$to_info->mailbox.'@'.$to_info->host;
-      } else {
-        $msg['rx_email']='';
+        if (isset($to_info->mailbox) && isset($to_info->host))
+          $msg['rx_email']=$to_info->mailbox.'@'.$to_info->host;
       }
       return $msg;
     }
@@ -623,12 +691,14 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       $this->path_filtering = '+Filtering';
       $this->path_review = '+Filtering/Review';
       $this->path_block = '+Filtering/Zap';
+      $this->path_private = '+Filtering/Secure';
       $this->path_archive = '[Gmail]/All Mail';
       $this->delete_mode = 'gmail';      
     } else if ($provider == Account::PROVIDER_FASTMAIL) {
       $this->path_inbox = 'Inbox';
       $this->path_filtering = 'Inbox.+Filtering';
       $this->path_review = 'Inbox.+Filtering.Review';
+      $this->path_private = 'Inbox.+Filtering.Secure';
       $this->path_block = 'Inbox.+Filtering.Zap';
       $this->path_archive = 'Inbox.Archive';
       $this->delete_mode = 'delete';      
@@ -637,6 +707,7 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       $this->path_inbox = 'Inbox';
       $this->path_filtering = '+Filtering';
       $this->path_review = '+Filtering/Review';
+      $this->path_private = '+Filtering/Secure';
       $this->path_block = '+Filtering/Zap';
       $this->path_archive = 'Inbox/Archive';
       $this->delete_mode = 'delete';            
@@ -650,15 +721,71 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
        return true;
     }
 
+    // read message parts
+
+    function getPlainText($uid) {
+      $body = $this->get_part($uid, "TEXT/PLAIN");
+      return $body;
+    }
+
+    function getHtml($uid) {
+      $body = $this->get_part($uid, "TEXT/HTML");
+      return $body;
+    }
+
+    // excerpted from http://www.sitepoint.com/exploring-phps-imap-library-1/
+    function get_part($uid, $mimetype, $structure = false, $partNumber = false) {
+        if (!$structure) {
+               $structure = imap_fetchstructure($this->stream, $uid, FT_UID);
+        }
+        if ($structure) {
+            if ($mimetype == $this->get_mime_type($structure)) {
+                if (!$partNumber) {
+                    $partNumber = 1;
+                }
+                $text = imap_fetchbody($this->stream, $uid, $partNumber, FT_UID | FT_PEEK);
+                switch ($structure->encoding) {
+                    case 3: return imap_base64($text);
+                    case 4: return imap_qprint($text);
+                    default: return $text;
+               }
+           }
+
+            // multipart 
+            if ($structure->type == 1) {
+                foreach ($structure->parts as $index => $subStruct) {
+                    $prefix = "";
+                    if ($partNumber) {
+                        $prefix = $partNumber . ".";
+                    }
+                    $data = $this->get_part($uid, $mimetype, $subStruct, $prefix . ($index + 1));
+                    if ($data) {
+                        return $data;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    function get_mime_type($structure) {
+        $primaryMimetype = array("TEXT", "MULTIPART", "MESSAGE", "APPLICATION", "AUDIO", "IMAGE", "VIDEO", "OTHER");
+
+        if ($structure->subtype) {
+           return $primaryMimetype[(int)$structure->type] . "/" . $structure->subtype;
+        }
+        return "TEXT/PLAIN";
+    }    
+  
+    // advanced module functionality
+
     public function notify($sender,$message,$notify_type) { 
       if (Yii::app()->params['version']<>'basic') {
         $a = new Advanced();
         $a->notify($sender,$message,$notify_type); 
       }            
     }
-  
-    // advanced module functionality
-    
+        
     public function isQuietHours($user_id) {
       if (Yii::app()->params['version']<>'basic') {
         $a = new Advanced();
@@ -690,61 +817,22 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       } else 
         return false;
     }
-    
-      public function testReview() {
-        $account = Account::model()->findByPk(1);
-        $this->hostname = $account->address;
-        $cred = Account::model()->getCredentials($account->cred);
-        $imap = new Socket (array ('server' => "ssl://imap.gmail.com",
-          'port' => 993,
-          'login' => $cred[0],
-          'password' => $cred[1]), 'INBOX');
-         $imap->get_from();
-        yexit();
+  
+  public function challengeSender($user_id,$account_id,$sender,$message) {
+    if (Yii::app()->params['version']<>'basic') {
+      if (UserSetting::model()->useWhitelisting($user_id)) {
+        $a = new Advanced();
+        $result = $a->challengeSender($user_id,$account_id,$sender,$message);
       }
-
-      public function testSocket() {
-          $imap = new Socket (array ('server' => "ssl://imap.gmail.com",
-            'port' => 993,
-            'login' => Yii::app()->params['email'],
-            'password' => Yii::app()->params['email_key']), 'INBOX');
-          $imap->get_google_labels(1);
-          $imap->testgl(1);
-          yexit();
-        }
-
-        public function testOpen() {
-          echo 'opening Filt';
-          $result = $this->open(1,'+Filtering');
-          $this->close();
-          echo 'opening Zap';
-          $result = $this->open(1,'+Filtering/Zap');
-          $this->close();
-        }
-
-        public function testHeaders() {
-          // test use of imap_headers
-          $this->open(1,'+Filtering/Bulk');
-    /*      $folder = 'Inbox';
-          echo 'Opening '.$folder;lb();
-          $folders = imap_list($this->stream, $this->hostname, "*");
-          echo "<ul>";
-          foreach ($folders as $f) {
-              echo '<li>' . imap_utf7_decode($f) . '</li>';
-          }
-          echo "</ul>";
-    */
-        $t=time();
-          $result = @imap_headers($this->stream);
-          $x = time()-$t;
-          echo 'Time Elapsed'.($x/1000).' sec';lb();
-          foreach($result as $header) {
-                      echo "$header";lb(2);
-                      //preg_match('_([A-Z]+) (\d+)\)(\d+-[A-Za-z]+-\d{4}) (\S+@\S+\.\S+) (.+) \((\d+) chars\)_', $header, $matches);
-                      //var_dump($matches);
-          }
-          $this->close();
-        }
+    }
+  }
+  
+  public function addPrivateMessage($message,$uid) {
+    if (Yii::app()->params['version']<>'basic') {
+      $a = new Advanced();
+      $a->addPrivateMessage($this,$message,$uid);
+    }   
+  }
     
 }
 ?>

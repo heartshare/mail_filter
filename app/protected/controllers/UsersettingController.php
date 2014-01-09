@@ -97,6 +97,10 @@ class UsersettingController extends Controller
  		if(isset($_POST['UserSetting']))
  		{
  			$model->attributes=$_POST['UserSetting'];
+      if (Yii::app()->params['version']=='basic') {
+        $model->inbox_age = UserSetting::INBOX_AGE_NONE;
+        $model->use_whitelist = UserSetting::WHITELIST_NO;
+      }
  			if($model->save())
  				$this->redirect(array('update'));
  		}

@@ -27,7 +27,7 @@ class SenderController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array(''),
+				'actions'=>array('verify'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -140,7 +140,7 @@ class SenderController extends Controller
   		if(isset($_GET['Sender']))
   			$model->attributes=$_GET['Sender'];
   		$this->render('index',array(
-  			'model'=>$model,
+  			'model'=>$model->owned_by(Yii::app()->user->id),
   		));
 	}
 	
@@ -184,6 +184,24 @@ class SenderController extends Controller
 			'model'=>$model,
 		));
 	}
+
+  public function actionVerify($s = 0, $m=0,$u=0) {
+    // verify that secure msg url from digest is valid, log in user, show msg
+    $sender_id = $s;
+    $message_id = $m;
+    $udate = $u;
+    $msg = Message::model()->findByPk($message_id);
+    if (!empty($msg) && $msg->sender_id == $sender_id && $msg->udate == $udate) {
+      $result = 'Thank you for your assistance. I\'ll respond to your email as soon as possible.';
+      $a = new Advanced();
+      $a->verifySender($msg->account_id,$sender_id);
+    } else {
+      $result = 'Sorry, we could not verify your email address.';
+    }
+		$this->render('verify',array(
+			'result'=>$result,
+		));
+  }
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

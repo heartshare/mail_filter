@@ -222,4 +222,11 @@ function objectToArray( $object ) {
     }
     return array_map( 'objectToArray', $object );
 }
+
+function decryptStr($str) {
+  if (Yii::app()->params['version']=='basic') 
+    return $str;
+  $a=new Advanced();
+  return $a->decryptStr($str);  
+}
 ?>

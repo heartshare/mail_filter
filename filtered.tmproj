@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>app/protected/controllers/FolderController.php</string>
+	<string>app/protected/components/Advanced.php</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -25,148 +25,178 @@
 	<integer>328</integer>
 	<key>metaData</key>
 	<dict>
-		<key>app/protected/controllers/AccountController.php</key>
+		<key>app/protected/components/Advanced.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>67</integer>
 				<key>line</key>
-				<integer>152</integer>
+				<integer>209</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>186</integer>
+		</dict>
+		<key>app/protected/config/main.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>35</integer>
+				<key>line</key>
+				<integer>90</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>129</integer>
+			<integer>73</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>31</integer>
 				<key>line</key>
-				<integer>144</integer>
+				<integer>90</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>35</integer>
 				<key>line</key>
-				<integer>152</integer>
+				<integer>90</integer>
 			</dict>
 		</dict>
-		<key>app/protected/controllers/FolderController.php</key>
+		<key>app/protected/controllers/DaemonController.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>85</integer>
+				<integer>22</integer>
 				<key>line</key>
-				<integer>103</integer>
+				<integer>58</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>85</integer>
+			<integer>43</integer>
 		</dict>
 		<key>app/protected/controllers/MessageController.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>40</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>138</integer>
+				<integer>64</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>120</integer>
+			<integer>43</integer>
 		</dict>
-		<key>app/protected/controllers/SenderController.php</key>
+		<key>app/protected/controllers/TestController.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>26</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>166</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>147</integer>
+			<integer>5</integer>
 		</dict>
-		<key>app/protected/models/Folder.php</key>
+		<key>app/protected/extensions/yii-detectmobilebrowser/XDetectMobileBrowser.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>178</integer>
+				<integer>7</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>160</integer>
+			<integer>12</integer>
 		</dict>
 		<key>app/protected/models/Message.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>60</integer>
+				<integer>15</integer>
 				<key>line</key>
-				<integer>131</integer>
+				<integer>329</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>42</integer>
+			<integer>0</integer>
 		</dict>
 		<key>app/protected/models/Remote.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>22</integer>
 				<key>line</key>
-				<integer>46</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>26</integer>
-		</dict>
-		<key>app/protected/models/Sender.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>19</integer>
-				<key>line</key>
-				<integer>204</integer>
+				<integer>117</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>175</integer>
+			<integer>101</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>15</integer>
+				<integer>14</integer>
 				<key>line</key>
-				<integer>204</integer>
+				<integer>117</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>22</integer>
 				<key>line</key>
-				<integer>204</integer>
+				<integer>117</integer>
+			</dict>
+		</dict>
+		<key>app/protected/models/Socket.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>38</integer>
+				<key>line</key>
+				<integer>163</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>140</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>28</integer>
+				<key>line</key>
+				<integer>163</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>38</integer>
+				<key>line</key>
+				<integer>163</integer>
 			</dict>
 		</dict>
 		<key>app/protected/views/account/_search.php</key>
@@ -177,50 +207,6 @@
 				<integer>0</integer>
 				<key>line</key>
 				<integer>6</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>app/protected/views/account/index.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>18</integer>
-				<key>line</key>
-				<integer>41</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>34</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>37</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>18</integer>
-				<key>line</key>
-				<integer>41</integer>
-			</dict>
-		</dict>
-		<key>app/protected/views/folder/_form.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>37</integer>
-				<key>line</key>
-				<integer>12</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -276,42 +262,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>28</integer>
-				<key>line</key>
-				<integer>35</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>19</integer>
-		</dict>
-		<key>app/protected/views/sender/_form.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>30</integer>
-				<key>line</key>
-				<integer>29</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>4</integer>
-		</dict>
-		<key>app/protected/views/sender/_search.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>9</integer>
+				<integer>69</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
+			<integer>43</integer>
+		</dict>
+		<key>app/protected/views/message/view.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>39</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
 			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>20</integer>
 		</dict>
 		<key>app/protected/views/sender/admin.php</key>
 		<dict>
@@ -343,60 +315,24 @@
 				<integer>62</integer>
 			</dict>
 		</dict>
-		<key>app/protected/views/sender/index.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>6</integer>
-				<key>line</key>
-				<integer>39</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>14</integer>
-		</dict>
-		<key>app/protected/views/sender/trained.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>39</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>12</integer>
-		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>app/protected/controllers/FolderController.php</string>
-		<string>app/protected/views/folder/_form.php</string>
-		<string>app/protected/models/Folder.php</string>
-		<string>app/protected/views/message/admin.php</string>
-		<string>app/protected/views/message/index.php</string>
-		<string>app/protected/views/sender/_form.php</string>
-		<string>app/protected/views/sender/index.php</string>
-		<string>app/protected/views/sender/_search.php</string>
-		<string>app/protected/controllers/SenderController.php</string>
-		<string>app/protected/views/sender/trained.php</string>
-		<string>app/protected/views/sender/admin.php</string>
-		<string>app/protected/models/Message.php</string>
-		<string>app/protected/views/message/_search.php</string>
-		<string>app/protected/views/account/index.php</string>
-		<string>app/protected/views/account/_search.php</string>
-		<string>app/protected/controllers/MessageController.php</string>
-		<string>app/protected/controllers/AccountController.php</string>
-		<string>app/protected/models/Sender.php</string>
 		<string>app/protected/models/Remote.php</string>
+		<string>app/protected/models/Socket.php</string>
+		<string>app/protected/models/Message.php</string>
+		<string>app/protected/controllers/MessageController.php</string>
+		<string>app/protected/components/Advanced.php</string>
+		<string>app/protected/views/message/view.php</string>
+		<string>app/protected/extensions/yii-detectmobilebrowser/XDetectMobileBrowser.php</string>
+		<string>app/protected/config/main.php</string>
+		<string>app/protected/views/message/index.php</string>
+		<string>app/protected/controllers/DaemonController.php</string>
+		<string>app/protected/controllers/TestController.php</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{340, -0}, {1090, 878}}</string>
+	<string>{{340, 0}, {1090, 878}}</string>
 </dict>
 </plist>
