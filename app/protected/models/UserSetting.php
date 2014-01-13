@@ -135,6 +135,11 @@ class UserSetting extends CActiveRecord
 		));
 	}
 	
+	public function loadByUser($user_id) {
+	  $us=UserSetting::model()->findByAttributes(array('user_id'=>$user_id));
+	  return $us;
+	}
+	
 	public function useWhitelisting($user_id) {
 	  $us=UserSetting::model()->findByAttributes(array('user_id'=>$user_id));
 	  if ($us['use_whitelist'] == self::WHITELIST_YES)

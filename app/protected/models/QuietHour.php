@@ -184,7 +184,7 @@ class QuietHour extends CActiveRecord
  	 }
  	 
  	 public function debug() {
-  		$ui = UserSetting::model()->findByPk(1);
+  		$ui = UserSetting::model()->loadByUser(1);
   		if (!empty($ui) and $ui->timezone<>'')
  	      date_default_timezone_set($ui->timezone); 	   
      $current_day_week = date('w'); // 0 Sunday - 6 Saturday

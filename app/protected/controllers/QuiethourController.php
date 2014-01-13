@@ -31,7 +31,7 @@ class QuiethourController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index','view','create','update','delete'),
+				'actions'=>array('index','view','create','update','delete','dnd'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -130,10 +130,22 @@ class QuiethourController extends Controller
 	 */
 	public function actionIndex()
 	{
+	  $ui = UserSetting::model()->loadByUser(Yii::app()->user->id);
 		$dataProvider=new CActiveDataProvider('QuietHour');
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+			'dataProvider'=>$dataProvider,'ui'=>$ui,
 		));
+	}
+	
+	public function actionDnd()
+	{
+	  $ui = UserSetting::model()->loadByUser(Yii::app()->user->id);
+	  if ($ui->do_not_disturb ==0)
+	    $dnd = 1;
+	  else
+	    $dnd =0;
+    $update_dnd = Yii::app()->db->createCommand()->update(Yii::app()->getDb()->tablePrefix.'user_setting',array('do_not_disturb'=>$dnd),'user_id=:user_id', array(':user_id'=>Yii::app()->user->id));
+		$this->redirect(array('index'));
 	}
 
 	/**

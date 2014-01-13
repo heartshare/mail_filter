@@ -137,15 +137,17 @@ class Remote extends CComponent
            	    continue;  
            	  }
            if ($action == self::ACTION_MOVE_FILTERED) {
-             $cnt+=1;             
-             // send smartphone notifications based on sender
-             if ($sender->alert==Sender::ALERT_YES) {
-               $this->notify($sender,$message,Monitor::NOTIFY_SENDER);
-             }
-             // send notifications based on keywords
-             if (AlertKeyword::model()->scan($msg)) {
-               $this->notify($sender,$message,Monitor::NOTIFY_KEYWORD);
-             }
+             $cnt+=1;         
+             if ($sender->exclude_quiet_hours == Sender::EQH_YES or !$this->isQuietHours($user_id)) {
+               // send smartphone notifications based on sender
+               if ($sender->alert==Sender::ALERT_YES) {
+                 $this->notify($sender,$message,Monitor::NOTIFY_SENDER);
+               }
+               // send notifications based on keywords
+               if (AlertKeyword::model()->scan($msg)) {
+                 $this->notify($sender,$message,Monitor::NOTIFY_KEYWORD);
+               }               
+             }               
              // move imap msg to +Filtering
              echo 'Moving to +Filtering';lb();
              $result = @imap_mail_move($this->stream,$msg['uid'],$this->path_filtering,CP_UID);
@@ -539,6 +541,21 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
           }
           @imap_expunge($this->stream);    
           $this->close();  
+          // delete older digests from inbox
+          $tstamp = time()-12*60*60; // 12 hrs ago
+           $this->open($account_id,$this->path_inbox);
+            $recent_messages = @imap_search($this->stream, 'SUBJECT "Message Digest for" BEFORE "'.date("j F Y",$tstamp).'"',SE_UID);
+            if ($recent_messages===false) continue; // to do - continue into next account
+            $result = imap_fetch_overview($this->stream, implode(',',array_slice($recent_messages,0,$message_limit)),FT_UID);
+            foreach ($result as $item) {         
+              if (!$this->checkExecutionTime($time_start)) break;
+              // get msg header and stream uid
+              $msg = $this->parseHeader($item);            
+              $this->printMsg($msg);
+              $this->deleteMessage($m,$msg,$msg['uid']);                
+            }
+            @imap_expunge($this->stream);    
+            $this->close();                        
       // end account loop
       }
       // end user loop
@@ -702,6 +719,14 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       $this->path_block = 'Inbox.+Filtering.Zap';
       $this->path_archive = 'Inbox.Archive';
       $this->delete_mode = 'delete';      
+    }    else if ($provider == Account::PROVIDER_DOVECOT) {
+      $this->path_inbox = 'Inbox';
+      $this->path_filtering = 'Inbox/+Filtering';
+      $this->path_review = 'Inbox/+Filtering/Review';
+      $this->path_private = 'Inbox/+Filtering/Secure';
+      $this->path_block = 'Inbox/+Filtering/Zap';
+      $this->path_archive = 'Inbox/Archive';
+      $this->delete_mode = 'delete';
     } else {
       // other provider
       $this->path_inbox = 'Inbox';

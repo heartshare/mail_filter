@@ -25,6 +25,7 @@ class Account extends CActiveRecord
 {
   const PROVIDER_GMAIL = 0;
   const PROVIDER_FASTMAIL = 10;
+  const PROVIDER_DOVECOT = 20;
   const PROVIDER_OTHER = 100;
   public $username;
   public $password;
@@ -138,6 +139,7 @@ class Account extends CActiveRecord
     return array(
       self::PROVIDER_GMAIL=>'Gmail',
       self::PROVIDER_FASTMAIL=>'FastMail',
+      self::PROVIDER_DOVECOT=>'Dovecot',
       self::PROVIDER_OTHER=>'Other',
        );
    }		

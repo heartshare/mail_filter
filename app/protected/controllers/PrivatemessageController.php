@@ -142,7 +142,7 @@ class PrivatemessageController extends Controller
   		$model->user_id = Yii::app()->user->id;
   		if(isset($_GET['PrivateMessage']))
   			$model->attributes=$_GET['PrivateMessage'];
-  		$ui = UserSetting::model()->findByPk(Yii::app()->user->id);
+  		$ui = UserSetting::model()->loadByUser(Yii::app()->user->id);
    		if (!empty($ui) and $ui->timezone<>'')
 	      date_default_timezone_set($ui->timezone);
   		$this->render('index',array(

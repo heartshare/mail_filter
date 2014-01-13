@@ -58,13 +58,10 @@ class DaemonController extends Controller
     $digest = Message::model()->processDigests();
     $r = new Remote();
     $r->processRecentTrainings();
+    $r->scanPrivate();
     if ($current_hour%2) {
       // every other hour
       $r->processDetectTraining();
-    }
-    if ($current_hour%3) {
-      // every few hours
-      $r->scanPrivate();
     }
     if ($current_hour%6) {
       // every six hours
@@ -75,12 +72,11 @@ class DaemonController extends Controller
 	public function actionDaily() {
 	  echo 'Daily tasks';
     $r = new Remote();
+    $r->purgeMessages();
     $r->expireSenders();      
 	}
 	
 	public function actionWeekly() {
-    $r = new Remote();
-    $r->purgeMessages();
     // to do: purge Message table
 	}
 }

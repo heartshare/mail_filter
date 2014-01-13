@@ -176,6 +176,14 @@ class Folder extends CActiveRecord
       $this->add($user_id,$account_id,'+Filtering/Bulk',1);
       $this->add($user_id,$account_id,'+Filtering/Zap',1);    
       $folders = array('+Filtering','+Filtering/Bulk','+Filtering/Review','+Filtering/Zap');
+    } else if ($provider == Account::PROVIDER_DOVECOT) {
+          $this->add($user_id,$account_id,'INBOX/+Filtering/Bulk',1);
+          $this->add($user_id,$account_id,'INBOX/+Filtering/Zap',1);
+          $folders = array('INBOX/+Filtering','INBOX/+Filtering/Bulk','INBOX/+Filtering/Review','INBOX/+Filtering/Zap');
+    } else {
+          $this->add($user_id,$account_id,'+Filtering/Bulk',1);
+          $this->add($user_id,$account_id,'+Filtering/Zap',1);
+          $folders = array('+Filtering','+Filtering/Bulk','+Filtering/Review','+Filtering/Zap');
     }
     // create the folders remotely in the mailbox    
     foreach ($folders as $f) {

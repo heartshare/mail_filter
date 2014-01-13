@@ -256,7 +256,7 @@ class Message extends CActiveRecord
         $subject ='Message Digest for '.$account['name'];
         if ($us['digestLast'] == 0) $us['digestLast'] = time()-(7*24*60*60); // one week back by default
         // build top of digest
-        $body ='<p><em>This digest consists of messages you have received since '.date("M j, g:i a",$us['digestLast']).'</em></p>';
+        $body ='<p><em>Messages received since '.date("M j, g:i a",$us['digestLast']).'</em></p>';
       // build digest sections for each folder: review, then each folder set to be included in the digest
         $criteria = new CDbCriteria(array('order'=>'name ASC'));
         $folders = Folder::model()->findAllByAttributes(array('account_id'=>$account_id,'user_id'=>$user_id,'digest'=>1),$criteria);
@@ -275,13 +275,13 @@ class Message extends CActiveRecord
             // find all messages since $digest->digestLast
             $message_list = Message::model()->account_of($account_id)->in_review()->since($us['digestLast'])->findAll(array('order'=>'id desc'));            
             // build folder heading
-            $section.='<p><strong>The following messages in your review folder need your attention:</strong><br /><ul>';
+            $section.='<p><strong>Messages in your review folder:</strong><br /><ul>';
           } else {
             // regular folder
             // find all messages since $digest->digestLast
             $message_list = Message::model()->account_of($account_id)->in_folder($folder_id)->since($us['digestLast'])->findAll(array('order'=>'id desc'));
             // build folder heading
-            $section.='<p><strong>Messages in '.$mailbox.'</strong><br /><ul>';
+            $section.='<p><strong>In '.$mailbox.'</strong><br /><ul>';
           }
           // build message section of for this folder
           if (!empty($message_list)) {
@@ -302,7 +302,7 @@ class Message extends CActiveRecord
           }
       } // end of folder loop
         // build end of digest
-        $digest_footer = '<p>End of your digest.</p><p>';
+        $digest_footer = '<p>End of digest.</p><p>';
         if (Yii::app()->params['version']=='basic') {
           $digest_footer.='If you would like direct links to view messages on the web from the digest, <a href="http://jeffreifman.com/filtered-open-source-imap-mail-filtering-software-for-php/feature-summary/">upgrade to the advanced module</a>. ';
         }

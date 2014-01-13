@@ -3,9 +3,18 @@ $this->breadcrumbs=array(
 	'Quiet Hours',
 );
 
-$this->menu=array(
-	array('label'=>'Add an interval','url'=>array('create')),
-);
+if ($ui->do_not_disturb==0) {
+  $this->menu=array(
+  	array('label'=>'Add an interval','url'=>array('create')),
+  	array('label'=>'Turn Do Not Disturb ON','url'=>array('dnd')),
+  );  
+} else {
+  $this->menu=array(
+  	array('label'=>'Add an interval','url'=>array('create')),
+  	array('label'=>'Turn Do Not Disturb OFF','url'=>array('dnd')),
+  );    
+}
+
 ?>
 
 <h1>Quiet Hours</h1>

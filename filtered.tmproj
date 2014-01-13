@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>currentDocument</key>
-	<string>app/protected/components/Advanced.php</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -25,92 +23,6 @@
 	<integer>328</integer>
 	<key>metaData</key>
 	<dict>
-		<key>app/protected/components/Advanced.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>67</integer>
-				<key>line</key>
-				<integer>209</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>186</integer>
-		</dict>
-		<key>app/protected/config/main.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>35</integer>
-				<key>line</key>
-				<integer>90</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>73</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>31</integer>
-				<key>line</key>
-				<integer>90</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>35</integer>
-				<key>line</key>
-				<integer>90</integer>
-			</dict>
-		</dict>
-		<key>app/protected/controllers/DaemonController.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>22</integer>
-				<key>line</key>
-				<integer>58</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>43</integer>
-		</dict>
-		<key>app/protected/controllers/MessageController.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>64</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>43</integer>
-		</dict>
-		<key>app/protected/controllers/TestController.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>5</integer>
-		</dict>
 		<key>app/protected/extensions/yii-detectmobilebrowser/XDetectMobileBrowser.php</key>
 		<dict>
 			<key>caret</key>
@@ -124,80 +36,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>12</integer>
-		</dict>
-		<key>app/protected/models/Message.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>15</integer>
-				<key>line</key>
-				<integer>329</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>app/protected/models/Remote.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>22</integer>
-				<key>line</key>
-				<integer>117</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>101</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>14</integer>
-				<key>line</key>
-				<integer>117</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>22</integer>
-				<key>line</key>
-				<integer>117</integer>
-			</dict>
-		</dict>
-		<key>app/protected/models/Socket.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>38</integer>
-				<key>line</key>
-				<integer>163</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>140</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>28</integer>
-				<key>line</key>
-				<integer>163</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>38</integer>
-				<key>line</key>
-				<integer>163</integer>
-			</dict>
 		</dict>
 		<key>app/protected/views/account/_search.php</key>
 		<dict>
@@ -257,34 +95,6 @@
 				<integer>63</integer>
 			</dict>
 		</dict>
-		<key>app/protected/views/message/index.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>69</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>43</integer>
-		</dict>
-		<key>app/protected/views/message/view.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>4</integer>
-				<key>line</key>
-				<integer>39</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>20</integer>
-		</dict>
 		<key>app/protected/views/sender/admin.php</key>
 		<dict>
 			<key>caret</key>
@@ -316,20 +126,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>openDocuments</key>
-	<array>
-		<string>app/protected/models/Remote.php</string>
-		<string>app/protected/models/Socket.php</string>
-		<string>app/protected/models/Message.php</string>
-		<string>app/protected/controllers/MessageController.php</string>
-		<string>app/protected/components/Advanced.php</string>
-		<string>app/protected/views/message/view.php</string>
-		<string>app/protected/extensions/yii-detectmobilebrowser/XDetectMobileBrowser.php</string>
-		<string>app/protected/config/main.php</string>
-		<string>app/protected/views/message/index.php</string>
-		<string>app/protected/controllers/DaemonController.php</string>
-		<string>app/protected/controllers/TestController.php</string>
-	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
