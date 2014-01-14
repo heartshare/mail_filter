@@ -112,7 +112,7 @@ class Remote extends CComponent
             if (time()-$msg['udate']>$this->scan_seconds) continue; // skip msg
             // default action
       	     $action = self::ACTION_MOVE_FILTERED;
-      	     $isNew = $s->isNew($account_id,$msg["personal"], $msg["mailbox"]);
+      	     $isNew = $s->isNew($account_id,$msg["email"]);
             // look up sender, if new, create them
             $sender_id = $s->add($user_id,$account_id,$msg["personal"], $msg["mailbox"], $msg["host"],0);                       
             $sender = Sender::model()->findByPk($sender_id);
@@ -121,8 +121,7 @@ class Remote extends CComponent
           	  $message = Message::model()->findByPk($message_id);
               if ($isNew) {
                 $this->challengeSender($user_id,$account_id,$sender,$message);
-              }
-
+              } 
            	  if ($message['status'] == Message::STATUS_FILTERED ||
            	    $message['status'] == Message::STATUS_REVIEW ||
            	    ($message['status'] == Message::STATUS_TRAINED && $message['folder_id'] <> $folder_id) ||

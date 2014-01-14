@@ -191,15 +191,19 @@ class Sender extends CActiveRecord
 		));
 	}
 
-	public function isNew($account_id,$mailbox, $host) {
+	public function isNew($account_id,$email) {
 	  // detects if sender is new in this account
-    $email = $mailbox.'@'.$host;
     $s = Sender::model()->findByAttributes(array('account_id'=>$account_id,'email'=>$email));
     if (empty($s))
       return true; // new sender
     else
       return false;
 	}
+
+  public function touchLastEmailed($sender_id) {
+    $update_folder = Yii::app()->db->createCommand()->update(Yii::app()->getDb()->tablePrefix.'sender',array('last_emailed'=>time()),'id=:id', array(':id'=>$sender_id));
+  }
+
 	
 	public function add($user_id,$account_id,$personal, $mailbox, $host,$folder_id=0) {
     $email = $mailbox.'@'.$host;
@@ -283,6 +287,9 @@ class Sender extends CActiveRecord
             ),
             'recently_trained'=>array(
               'condition'=>'folder_id>0 and last_trained_processed=0 and last_trained > '.(time()-24*60*60), // within last day              
+            ),
+            'recently_emailed'=>array(
+              'condition'=>'last_emailed > '.(time()-24*60*60), // within last day              
             ),
               'trained'=>array(
                   'condition'=>'folder_id>0', 
