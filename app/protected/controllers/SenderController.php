@@ -27,7 +27,7 @@ class SenderController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('verify'),
+				'actions'=>array('verify','program'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -133,12 +133,25 @@ class SenderController extends Controller
 	public function actionIndex()
 	{
 	  $this->layout = '//layouts/column1';
-  		$model=new Sender('search');
+	  $model=new Sender('search');  		  	
+	  if(isset($_POST['sender-grid_c0']) and !empty($_POST['Sender']['folder_id']))
+	  {
+	    $dest_folder_id = $_POST['Sender']['folder_id'];
+	    $sender_list = $_POST['sender-grid_c0'];
+	    foreach ($sender_list as $sender_id) {
+	      // train sender to folder_id
+	      $model->setFolderCheckAccount($sender_id,$dest_folder_id);
+	    }
+	    Yii::app()->user->setFlash('trained','Your selections have been trained. <em><strong>Note:</strong> Trainings set to folders in the wrong account will be ignored.</em>');
+	    unset($_POST['Sender']['folder_id']);
+		} 
   		$model->unsetAttributes();  // clear any default values
   		$model->user_id = Yii::app()->user->id;      		
   		$model->folder_id = 0;
   		if(isset($_GET['Sender']))
   			$model->attributes=$_GET['Sender'];
+  		else if(isset($_POST['Sender']))
+  			$model->attributes=$_POST['Sender'];
   		$this->render('index',array(
   			'model'=>$model->owned_by(Yii::app()->user->id),
   		));
@@ -147,11 +160,25 @@ class SenderController extends Controller
 	public function actionRecent()
 	{
 	  $this->layout = '//layouts/column1';
-  		$model=new Sender('search');
+  		$model=new Sender('search');  		
+	  
+	  if(isset($_POST['sender-grid_c0']) and !empty($_POST['Sender']['folder_id']))
+	  {
+	    $dest_folder_id = $_POST['Sender']['folder_id'];
+	    $sender_list = $_POST['sender-grid_c0'];
+	    foreach ($sender_list as $sender_id) {
+	      // train sender to folder_id
+	      $model->setFolderCheckAccount($sender_id,$dest_folder_id);
+	    }
+	    Yii::app()->user->setFlash('trained','Your selections have been trained. <em><strong>Note:</strong> Trainings set to folders in the wrong account will be ignored.</em>');		   
+	    unset($_POST['Sender']['folder_id']);	     	    
+		}  		
   		$model->unsetAttributes();  // clear any default values
   		$model->user_id = Yii::app()->user->id;      		
   		if(isset($_GET['Sender']))
   			$model->attributes=$_GET['Sender'];
+  		else if(isset($_POST['Sender']))
+  			$model->attributes=$_POST['Sender'];
   		$this->render('recent',array(
   			'model'=>$model,
   		));
@@ -160,11 +187,26 @@ class SenderController extends Controller
 	public function actionTrained()
 	{
 	  $this->layout = '//layouts/column1';
-  		$model=new Sender('search');
+	  	$model=new Sender('search');  		
+  	
+	  if(isset($_POST['sender-grid_c0']) and !empty($_POST['Sender']['folder_id']))
+	  {
+	    $dest_folder_id = $_POST['Sender']['folder_id'];
+	    $sender_list = $_POST['sender-grid_c0'];
+	    foreach ($sender_list as $sender_id) {
+	      // train sender to folder_id
+	      $model->setFolderCheckAccount($sender_id,$dest_folder_id);
+	    }
+	    Yii::app()->user->setFlash('trained','Your selections have been trained. <em><strong>Note:</strong> Trainings set to folders in the wrong account will be ignored.</em>');		 
+	    unset($_POST['Sender']['folder_id']);
+	    
+		}  		
   		$model->unsetAttributes();  // clear any default values
   		$model->user_id = Yii::app()->user->id;      		
   		if(isset($_GET['Sender']))
   			$model->attributes=$_GET['Sender'];
+  		else if(isset($_POST['Sender']))
+  			$model->attributes=$_POST['Sender'];
   		$this->render('trained',array(
   			'model'=>$model,
   		));
@@ -202,6 +244,42 @@ class SenderController extends Controller
 			'result'=>$result,
 		));
   }
+
+  public function actionProgram($f ='', $s = 0, $m=0,$u=0) {
+    // program sender to folder_id if valid message link
+    $folder_name = $f;
+    $sender_id = $s;
+    $message_id = $m;
+    $udate = $u;
+    // verify link properties from digest
+    $msg = Message::model()->findByPk($message_id);
+    if (!empty($msg) && $msg->sender_id == $sender_id && $msg->udate == $udate) {
+      $r = new Remote();
+      $r->setDefaultPaths($msg['account_id']);
+      $fld = new Folder();
+      if ($folder_name =='inbox') {
+        $folder_path = $r->path_inbox;
+      } else if ($folder_name =='bulk') {
+        $folder_path = $r->path_bulk;
+      } else if ($folder_name =='block') {
+        $folder_path = $r->path_block;        
+      }
+      $folder_id = $fld->lookup($msg['account_id'],$folder_path);
+      if ($folder_id>0) {
+        $sm = new Sender();
+        $sm->setFolder($sender_id,$folder_id);        
+        $result = 'Sender updated. Thank you.';
+      } else {
+        $result = 'Sorry, invalid destination folder.';
+      }
+    } else {
+      $result = 'Sorry, we could not verify your credentials.';
+    }
+		$this->render('program',array(
+			'result'=>$result,
+		));
+  }
+
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

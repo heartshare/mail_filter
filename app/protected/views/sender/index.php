@@ -21,6 +21,22 @@ $('.search-form form').submit(function(){
 
 ?>
 <h1>Senders</h1>
+<?php 
+
+if (Yii::app()->user->hasFlash('trained')) {
+  $this->widget('bootstrap.widgets.TbAlert', array(
+      'block'=>true, // display a larger alert block?
+      'fade'=>true, // use transitions?
+      'closeText'=>'×', // close link text - if set to false, no close link is displayed
+      'alerts'=>array( // configurations per alert type
+  	    'trained'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
+      ),
+  ));
+  
+}
+
+?>
+
 <div>
   <div class="right">
   </div>
@@ -30,24 +46,26 @@ $this->widget('bootstrap.widgets.TbButtonGroup', array(
   'type' => 'success',
       'toggle' => 'radio',
           'buttons'=>array(
-            array('label'=>'Recent', 'url'=>Yii::app()->getBaseUrl(true).'/sender/recent'),            
               array('label'=>'Untrained', 'url'=>Yii::app()->getBaseUrl(true).'/sender/index', 'htmlOptions'=> array('class'=>'active')),
               array('label'=>'Trained', 'url'=>Yii::app()->getBaseUrl(true).'/sender/trained'),
+              array('label'=>'Recent', 'url'=>Yii::app()->getBaseUrl(true).'/sender/recent'),            
     ),
 ));
 ?>
 </div>
 <br />
 </div>
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+	'id'=>'sender-form',
+	'enableAjaxValidation'=>false,
+)); ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'sender-grid',
 	'dataProvider'=>$model->untrained()->search('message_count desc'),
 	'filter'=>$model,
 	'columns'=>array(
-		'personal',
-		'email',
-  	array('class'=>'CDataColumn','name'=> 'message_count', 'header'=>'# Msgs'),
+    array('class'=>'CCheckBoxColumn','selectableRows'=>2),
     array(            
                 'name'=>'account_name',
                 'header'=>'Account',
@@ -60,6 +78,9 @@ $this->widget('bootstrap.widgets.TbButtonGroup', array(
                                                         'name'),array('empty' => 'All')),                
                 'value'=>'$data->account_name',
             ),
+		'personal',
+		'email',
+  	array('class'=>'CDataColumn','name'=> 'message_count', 'header'=>'# Msgs','htmlOptions'=>array('width'=>'25px')),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
     	'header'=>'Options',
@@ -67,6 +88,22 @@ $this->widget('bootstrap.widgets.TbButtonGroup', array(
 		),
 	),
 )); ?>
+
+<div class="form-actions">
+
+<?php 
+    echo CHtml::activeLabel($model,'folder_id',array('label'=>'Train to Folder:')); 
+    echo CHtml::activeDropDownList($model,'folder_id',Sender::model()->getFolderOptions(),array('empty'=>'Select a Folder'));
+    echo '<br />';
+   $this->widget('bootstrap.widgets.TbButton', array(
+	'buttonType'=>'submit',
+	'type'=>'primary',
+	'label'=>'Save',
+)); ?>
+
+</div>
+<?php $this->endWidget(); ?>
+
 <?php
 /*  $cntrlr = Yii::app()->controller->action->id; 
       $gridColumns = array(   

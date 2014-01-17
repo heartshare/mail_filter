@@ -18,6 +18,7 @@ class Remote extends CComponent
   public $path_block;
   public $path_archive;
   public $path_private;
+  public $path_bulk;  
   public $delete_mode;
   public $scan_seconds;
   public $process_timeout;
@@ -707,6 +708,7 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       $this->path_filtering = '+Filtering';
       $this->path_review = '+Filtering/Review';
       $this->path_block = '+Filtering/Zap';
+      $this->path_bulk = '+Filtering/Bulk';
       $this->path_private = '+Filtering/Secure';
       $this->path_archive = '[Gmail]/All Mail';
       $this->delete_mode = 'gmail';      
@@ -716,6 +718,7 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       $this->path_review = 'Inbox.+Filtering.Review';
       $this->path_private = 'Inbox.+Filtering.Secure';
       $this->path_block = 'Inbox.+Filtering.Zap';
+      $this->path_bulk = 'Inbox.+Filtering.Bulk';
       $this->path_archive = 'Inbox.Archive';
       $this->delete_mode = 'delete';      
     }    else if ($provider == Account::PROVIDER_DOVECOT) {
@@ -724,6 +727,7 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       $this->path_review = 'Inbox/+Filtering/Review';
       $this->path_private = 'Inbox/+Filtering/Secure';
       $this->path_block = 'Inbox/+Filtering/Zap';
+      $this->path_bulk = 'Inbox/+Filtering/Bulk';
       $this->path_archive = 'Inbox/Archive';
       $this->delete_mode = 'delete';
     } else {
@@ -733,6 +737,7 @@ $this->moveMessagesBySender($sender->user_id,$sender->account_id,$sender->id,$se
       $this->path_review = '+Filtering/Review';
       $this->path_private = '+Filtering/Secure';
       $this->path_block = '+Filtering/Zap';
+      $this->path_bulk= '+Filtering/Bulk';
       $this->path_archive = 'Inbox/Archive';
       $this->delete_mode = 'delete';            
     }

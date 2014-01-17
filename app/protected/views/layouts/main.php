@@ -47,7 +47,7 @@ if (Yii::app()->params['env']=='live') {  Yii::app()->clientScript->registerScri
 			'htmlOptions'=>array('class'=>'pull-left'),
 			'items' => array(
 				array('label'=>'Messages', 'url'=>array('/message/index'), ),
-				array('label'=>'Senders', 'url'=>array('/sender/recent'), ),
+				array('label'=>'Senders', 'url'=>array('/sender/index'), ),
 				array('label'=>'Folders', 'url'=>array('/folder/index'), ),
 				array('label'=>'Accounts', 'url'=>array('/account/index'), ),
     		array('label'=>'Advanced', 'items'=> array(

@@ -199,7 +199,16 @@ class Sender extends CActiveRecord
     else
       return false;
 	}
-
+	
+	public function isBot($email) {
+	  // detects if sender email is likely a bot
+	  $bot_str = array('auto-communication','no-reply','donotreply','noreply','mailer-daemon','autoresponder');
+	  foreach ($bot_str as $str) {
+      if (stristr($email,$str)!==false) return true;	    
+	  }
+    return false;
+	}
+	
   public function touchLastEmailed($sender_id) {
     $update_folder = Yii::app()->db->createCommand()->update(Yii::app()->getDb()->tablePrefix.'sender',array('last_emailed'=>time()),'id=:id', array(':id'=>$sender_id));
   }
@@ -231,6 +240,18 @@ class Sender extends CActiveRecord
     $update_folder = Yii::app()->db->createCommand()->update(Yii::app()->getDb()->tablePrefix.'sender',array('last_trained_processed'=>1),'id=:id', array(':id'=>$sender_id));
   }
   
+  public function setFolderCheckAccount($sender_id,$folder_id) {
+    $f=Folder::model()->findByPk($folder_id);
+    $s=Sender::model()->findByPk($sender_id);
+    if ($s->folder_id >0) {
+      $s->last_folder_id = $folder_id;
+      $s->save();
+    }
+    // folder must belong to same account as sender
+    if ($f->account_id == $s->account_id)
+      $this->setFolder($sender_id,$folder_id);
+  }
+  
   public function setFolder($sender_id,$folder_id) {
     // set training for sender to a folder and update last_trained timestamp
     $update_folder = Yii::app()->db->createCommand()->update(Yii::app()->getDb()->tablePrefix.'sender',array('folder_id'=>$folder_id,'last_trained'=>time(),'last_trained_processed'=>0),'id=:id', array(':id'=>$sender_id));
@@ -243,7 +264,12 @@ class Sender extends CActiveRecord
 
    public function getFolderOptions($account_id = 0)
    {
-     $foldersArray = CHtml::listData(Folder::model()->findAllByAttributes(array('account_id'=>$account_id)), 'id', 'name');
+     if ($account_id > 0) {
+       $foldersArray = CHtml::listData(Folder::model()->findAllByAttributes(array('account_id'=>$account_id)), 'id', 'name');       
+     } else {
+       // find folders across all accounts
+       $foldersArray = CHtml::listData(Folder::model()->findAll(array('order'=>'account_id asc, name asc')), 'id', 'namewithaccount');       
+     }
      return $foldersArray;
   }	
 

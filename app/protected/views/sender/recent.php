@@ -21,6 +21,22 @@ $('.search-form form').submit(function(){
 
 ?>
 <h1>Senders</h1>
+<?php 
+
+if (Yii::app()->user->hasFlash('trained')) {
+  $this->widget('bootstrap.widgets.TbAlert', array(
+      'block'=>true, // display a larger alert block?
+      'fade'=>true, // use transitions?
+      'closeText'=>'×', // close link text - if set to false, no close link is displayed
+      'alerts'=>array( // configurations per alert type
+  	    'trained'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
+      ),
+  ));
+  
+}
+
+?>
+
 <div>
   <div class="right">
     </div>
@@ -30,24 +46,28 @@ $('.search-form form').submit(function(){
     'type' => 'success',
         'toggle' => 'radio',
             'buttons'=>array(
-              array('label'=>'Recent', 'url'=>Yii::app()->getBaseUrl(true).'/sender/recent','htmlOptions'=> array('class'=>'active')),
                 array('label'=>'Untrained', 'url'=>Yii::app()->getBaseUrl(true).'/sender/index'),
                 array('label'=>'Trained', 'url'=>Yii::app()->getBaseUrl(true).'/sender/trained'),
+                array('label'=>'Recent', 'url'=>Yii::app()->getBaseUrl(true).'/sender/recent','htmlOptions'=> array('class'=>'active')),
       ),
   ));
   ?>
 </div>
 </div>
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+	'id'=>'sender-form',
+	'enableAjaxValidation'=>false,
+)); ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'sender-grid',
 	'dataProvider'=>$model->recent()->search(),
 	'filter'=>$model,
 	'columns'=>array(
+    array('class'=>'CCheckBoxColumn','selectableRows'=>2),	  
 		'personal',
 		'email',
   	array('class'=>'CDataColumn','name'=> 'message_count', 'header'=>'# Msgs'),
-//  	array('class'=>'CLinkColumn','labelExpression'=>'getFolderName($data->folder_id)', 'header'=>'Training','urlExpression'=>'Yii::app()->baseUrl."/sender/update/$data->id"'),
   array(            
             'name'=>'folder_name',
             'header'=>'Folder',
@@ -79,3 +99,17 @@ $('.search-form form').submit(function(){
 		),
 	),
 )); ?>
+<div class="form-actions">
+
+<?php 
+    echo CHtml::activeLabel($model,'folder_id',array('label'=>'Train to Folder:')); 
+    echo CHtml::activeDropDownList($model,'folder_id',Sender::model()->getFolderOptions(),array('empty'=>'Select a Folder'));
+    echo '<br />';
+   $this->widget('bootstrap.widgets.TbButton', array(
+	'buttonType'=>'submit',
+	'type'=>'primary',
+	'label'=>'Save',
+)); ?>
+
+</div>
+<?php $this->endWidget(); ?>

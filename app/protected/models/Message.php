@@ -266,16 +266,18 @@ class Message extends CActiveRecord
         array_unshift($folders,$review); // prepends review folder first
         foreach ($folders as $f) {
           $section ='';
+          $reviewFolder = false;
           echo 'Folder: '.$f['name'];lb();
           if (strtolower($f['name'])=='inbox' or $f['name']==$r->path_block) continue; // skip inbox & blocking folder
           $folder_id = $f['id'];
           $mailbox = $f['name'];
           if ($f['id']==0) {
             // review folder
+            $reviewFolder = true;
             // find all messages since $digest->digestLast
             $message_list = Message::model()->account_of($account_id)->in_review()->since($us['digestLast'])->findAll(array('order'=>'id desc'));            
             // build folder heading
-            $section.='<p><strong>Messages in your review folder:</strong><br /><ul>';
+            $section.='<p><strong>Messages for review:</strong><br /><ul>';
           } else {
             // regular folder
             // find all messages since $digest->digestLast
@@ -291,7 +293,13 @@ class Message extends CActiveRecord
               } else {
                 $msg_line = getSenderNameForDigest($m['sender_id']).': <a href="'.Yii::app()->getBaseUrl(true).'/privatemessage/index/">'.$m['subject'].'</a>';                
               }
-              // to do - add subject, body and link to html body
+              if ($reviewFolder) { 
+                // add links to inbox, bulk and block folders
+                $line_add='<a href="'.Yii::app()->getBaseUrl(true).'/sender/program/f/inbox/s/'.$m['sender_id'].'/m/'.$m['id'].'/u/'.$m['udate'].'">Inbox</a> |';
+                $line_add.=' <a href="'.Yii::app()->getBaseUrl(true).'/sender/program/f/bulk/s/'.$m['sender_id'].'/m/'.$m['id'].'/u/'.$m['udate'].'">Bulk</a> |';
+                $line_add.=' <a href="'.Yii::app()->getBaseUrl(true).'/sender/program/f/block/s/'.$m['sender_id'].'/m/'.$m['id'].'/u/'.$m['udate'].'">Zap</a>';
+                $msg_line.=' <em>'.$line_add.'</em>';
+              }              
               $section.='<li>'.$msg_line.'</li>';
               $message_count +=1;
             }

@@ -130,6 +130,11 @@ class Folder extends CActiveRecord
                      ),        
 		));
 	}
+	
+	public function getNamewithaccount()
+  {
+    return $this->name.' ('.$this->account->name.')';
+  }
 		
 	public function lookup($account_id,$name) {
 	  // lookup folder by account and name
